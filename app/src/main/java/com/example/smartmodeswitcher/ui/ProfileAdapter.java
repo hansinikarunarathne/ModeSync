@@ -44,8 +44,27 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         Profile profile = profiles.get(position);
         holder.profileName.setText(profile.getName());
         holder.profileMode.setText(profile.getMode());
-        holder.timeRange.setText(profile.getStartTime() + " - " + profile.getEndTime());
-        holder.location.setText(profile.getLocation());
+        
+        // Robust time display
+        String start = profile.getStartTime();
+        String end = profile.getEndTime();
+        if (start != null && !start.trim().isEmpty() && end != null && !end.trim().isEmpty()) {
+            holder.timeRange.setText(start + " - " + end);
+        } else {
+            holder.timeRange.setText("No time set");
+        }
+        holder.timeRange.setVisibility(View.VISIBLE);
+
+        // Display location information
+        if (profile.getLatitude() != null && profile.getLongitude() != null) {
+            String locationText = profile.getLocationName() != null && !profile.getLocationName().isEmpty() ?
+                    profile.getLocationName() :
+                    String.format("(%.6f, %.6f)", profile.getLatitude(), profile.getLongitude());
+            holder.location.setText(locationText);
+        } else {
+            holder.location.setText("No location set");
+        }
+        holder.location.setVisibility(View.VISIBLE);
 
         holder.editButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProfileEditorActivity.class);

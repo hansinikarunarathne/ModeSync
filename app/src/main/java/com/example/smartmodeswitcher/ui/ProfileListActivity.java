@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,8 +27,18 @@ public class ProfileListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_list);
 
+        // Set up toolbar navigation click listener
+        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         recyclerView = findViewById(R.id.profileRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Add FAB click listener
+        findViewById(R.id.fabAddProfile).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileListActivity.this, ProfileEditorActivity.class);
+            startActivity(intent);
+        });
 
         loadProfiles();
     }

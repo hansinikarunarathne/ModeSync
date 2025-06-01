@@ -70,7 +70,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/timeRange"
@@ -81,17 +82,23 @@
                 android:gravity="center_vertical"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="@color/secondary_text"
-                app:drawableStartCompat="@android:drawable/ic_menu_recent_history"/>
+                app:drawableStartCompat="@android:drawable/ic_menu_recent_history"
+                android:ellipsize="end"
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/location"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="@color/secondary_text"
-                app:drawableStartCompat="@android:drawable/ic_menu_mylocation"/>
+                app:drawableStartCompat="@android:drawable/ic_menu_mylocation"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingStart="8dp"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

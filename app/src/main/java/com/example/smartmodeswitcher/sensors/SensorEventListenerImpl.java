@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.smartmodeswitcher.modeswitcher.ModeSwitcher;
 
-public class SensorEventListenerImpl implements SensorEventListener{
+public class SensorEventListenerImpl implements SensorEventListener {
     private TextView tvContext, tvValues;
     private Context context;
 
@@ -59,8 +59,7 @@ public class SensorEventListenerImpl implements SensorEventListener{
     private void detectContext() {
         String contextResult = ContextDetector.detect(accelValues, lightValue, proximityValue);
         tvContext.setText("Detected Context: " + contextResult);
-
-        ModeSwitcher.switchMode(context,contextResult);
+        ModeSwitcher.switchMode(context, contextResult);
     }
 
     @Override

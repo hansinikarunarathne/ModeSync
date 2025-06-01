@@ -22,8 +22,14 @@ public class ProfileEvaluator {
             boolean isTimeMatch = isTimeInRange(currentTime, profile.getStartTime(), profile.getEndTime());
             boolean isLocationMatch = true;
 
-            if (!TextUtils.isEmpty(profile.getLocation()) && currentLocation != null) {
-                isLocationMatch = currentLocation.getProvider().equalsIgnoreCase(profile.getLocation()); // Simple match, can be improved
+            if (profile.getLatitude() != null && profile.getLongitude() != null && currentLocation != null) {
+                Location profileLocation = new Location("");
+                profileLocation.setLatitude(profile.getLatitude());
+                profileLocation.setLongitude(profile.getLongitude());
+                
+                // Check if current location is within 100 meters of profile location
+                float distanceInMeters = currentLocation.distanceTo(profileLocation);
+                isLocationMatch = distanceInMeters <= 100;
             }
 
             if (isTimeMatch && isLocationMatch) {

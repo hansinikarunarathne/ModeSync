@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -22,19 +23,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartModeSwitcher"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDyyf9lRG9r1UlIskptFIDjUP5TLz_B-u8" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.ProfileEditorActivity"
             android:exported="false" />
-        <activity android:name=".ui.ProfileListActivity"/>
+        <activity 
+            android:name=".ui.ProfileListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MapLocationPickerActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
