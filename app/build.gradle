@@ -22,21 +22,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation libs.appcompat
-    implementation libs.material
+    implementation 'com.google.android.material:material:1.11.0'
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.work.runtime
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.activity:activity:1.7.2'
     implementation 'androidx.fragment:fragment:1.5.7'

@@ -14,22 +14,39 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.cardview.widget.CardView;
 import com.example.smartmodeswitcher.mode.WorkScheduler;
 import com.example.smartmodeswitcher.sensors.SensorEventListenerImpl;
 import com.example.smartmodeswitcher.sensors.SensorManagerHelper;
 import com.example.smartmodeswitcher.ui.ProfileEditorActivity;
 import com.example.smartmodeswitcher.ui.ProfileListActivity;
+import com.example.smartmodeswitcher.ui.TodayEventsActivity;
+import com.example.smartmodeswitcher.utils.CalendarHelper;
+import android.os.Handler;
+import android.os.Looper;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.List;
+import java.lang.StringBuilder;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private SensorManagerHelper sensorManagerHelper;
     private SensorEventListenerImpl sensorEventListener;
-    private TextView tvContext, tvValues, tvSensorStatus;
+    private TextView tvContext, tvValues, tvSensorStatus, tvCalendarEvent;
     private Button btnEditProfiles;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private CardView contextCard, sensorCard, calendarCard;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 101;
+    private static final int CALENDAR_PERMISSION_REQUEST_CODE = 102;
     private boolean isInitialized = false;
     private boolean isResumed = false;
+    private CalendarHelper calendarHelper;
+    private Handler handler;
+    private static final long CALENDAR_UPDATE_INTERVAL = 60000; // Update every minute
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
         setupClickListeners();
+        setupSwipeRefresh();
+        calendarHelper = new CalendarHelper(this);
+        handler = new Handler(Looper.getMainLooper());
         
         // Check permissions in sequence
         checkInitialPermissions();
@@ -50,11 +70,33 @@ public class MainActivity extends AppCompatActivity {
         tvContext = findViewById(R.id.tvContext);
         tvValues = findViewById(R.id.tvValues);
         tvSensorStatus = findViewById(R.id.tvSensorStatus);
+        tvCalendarEvent = findViewById(R.id.tvCalendarEvent);
         btnEditProfiles = findViewById(R.id.btnEditProfiles);
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        
+        // Initialize cards
+        contextCard = findViewById(R.id.contextCard);
+        sensorCard = findViewById(R.id.sensorCard);
+        calendarCard = findViewById(R.id.calendarCard);
 
         tvSensorStatus.setText("");
         sensorEventListener = new SensorEventListenerImpl(this, tvContext, tvValues);
         sensorManagerHelper = new SensorManagerHelper(this, sensorEventListener, tvSensorStatus);
+    }
+
+    private void setupSwipeRefresh() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // Refresh sensor data
+            sensorManagerHelper.refreshSensors();
+            
+            // Refresh calendar data
+            updateCalendarEvent();
+            
+            // Stop refresh animation after a short delay
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                swipeRefreshLayout.setRefreshing(false);
+            }, 1000);
+        });
     }
 
     private void setupClickListeners() {
@@ -77,6 +119,52 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ProfileEditorActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.btnViewTodayEvents).setOnClickListener(v -> {
+            if (!isResumed) return;
+            Intent intent = new Intent(MainActivity.this, TodayEventsActivity.class);
+            startActivity(intent);
+        });
+
+        // Add card click listeners
+        contextCard.setOnClickListener(v -> {
+            // Show detailed context information
+            showContextDetails();
+        });
+
+        sensorCard.setOnClickListener(v -> {
+            // Show detailed sensor information
+            showSensorDetails();
+        });
+
+        calendarCard.setOnClickListener(v -> {
+            // Show detailed calendar information
+            showCalendarDetails();
+        });
+    }
+
+    private void showContextDetails() {
+        new AlertDialog.Builder(this)
+            .setTitle("Context Details")
+            .setMessage("Current context information and details about how it was determined.")
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
+    private void showSensorDetails() {
+        new AlertDialog.Builder(this)
+            .setTitle("Sensor Details")
+            .setMessage("Detailed information about active sensors and their current values.")
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
+    private void showCalendarDetails() {
+        new AlertDialog.Builder(this)
+            .setTitle("Calendar Details")
+            .setMessage("Detailed information about current and upcoming calendar events.")
+            .setPositiveButton("OK", null)
+            .show();
     }
 
     private void checkInitialPermissions() {
@@ -97,6 +185,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // Check calendar permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) 
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CALENDAR},
+                    CALENDAR_PERMISSION_REQUEST_CODE);
+        } else {
+            startCalendarUpdates();
+        }
+
         // Then check location permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
                 != PackageManager.PERMISSION_GRANTED) {
@@ -106,6 +204,100 @@ public class MainActivity extends AppCompatActivity {
         } else {
             checkBackgroundLocationPermission();
         }
+    }
+
+    private void startCalendarUpdates() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                updateCalendarEvent();
+                handler.postDelayed(this, CALENDAR_UPDATE_INTERVAL);
+            }
+        });
+    }
+
+    private void updateCalendarEvent() {
+        CalendarHelper.CalendarEvent currentEvent = calendarHelper.getCurrentEvent();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        
+        if (currentEvent != null) {
+            // Only handle events that are currently active
+            long currentTime = System.currentTimeMillis();
+            if (currentTime >= currentEvent.startTime && currentTime <= currentEvent.endTime) {
+                // Display the current event
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                String startTime = timeFormat.format(new Date(currentEvent.startTime));
+                String endTime = timeFormat.format(new Date(currentEvent.endTime));
+                
+                String eventText = String.format("Current Event: %s\nTime: %s - %s\nCalendar: %s",
+                        currentEvent.title, startTime, endTime, currentEvent.calendarName);
+                
+                tvCalendarEvent.setText(eventText);
+                
+                // Determine if we should set silent mode based on event properties
+                boolean shouldSetSilent = shouldSetSilentMode(currentEvent);
+                
+                // Set device mode based on event type
+                if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
+                    if (shouldSetSilent) {
+                        notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                        Log.d(TAG, "Setting silent mode for event: " + currentEvent.title);
+                    } else {
+                        WorkScheduler.scheduleProfileEvaluation(this);
+                        Log.d(TAG, "Using normal profile evaluation for event: " + currentEvent.title);
+                    }
+                }
+            } else {
+                tvCalendarEvent.setText("");
+                if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
+                    WorkScheduler.scheduleProfileEvaluation(this);
+                }
+            }
+        } else {
+            tvCalendarEvent.setText("");
+            if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
+                WorkScheduler.scheduleProfileEvaluation(this);
+            }
+        }
+    }
+
+    private boolean shouldSetSilentMode(CalendarHelper.CalendarEvent event) {
+        // Check if the event has attendees (indicates a meeting)
+        boolean hasAttendees = event.description != null && 
+                             (event.description.contains("attendee") || 
+                              event.description.contains("participant") ||
+                              event.description.contains("invitee"));
+
+        // Check if the event has a meeting link (indicates a virtual meeting)
+        boolean hasMeetingLink = event.description != null && 
+                               (event.description.contains("meet.google.com") ||
+                                event.description.contains("zoom.us") ||
+                                event.description.contains("teams.microsoft.com") ||
+                                event.description.contains("webex.com"));
+
+        // Check if the event has a specific duration (typical for meetings)
+        long duration = event.endTime - event.startTime;
+        boolean isTypicalMeetingDuration = duration >= 15 * 60 * 1000 && // 15 minutes
+                                         duration <= 120 * 60 * 1000;    // 2 hours
+
+        // Check for important personal events based on title or description
+        boolean isImportantEvent = (event.title != null && 
+            (event.title.toLowerCase().contains("doctor") ||
+             event.title.toLowerCase().contains("appointment") ||
+             event.title.toLowerCase().contains("interview") ||
+             event.title.toLowerCase().contains("exam") ||
+             event.title.toLowerCase().contains("presentation") ||
+             event.title.toLowerCase().contains("meeting"))) ||
+             (event.description != null &&
+             (event.description.toLowerCase().contains("doctor") ||
+              event.description.toLowerCase().contains("appointment") ||
+              event.description.toLowerCase().contains("interview") ||
+              event.description.toLowerCase().contains("exam") ||
+              event.description.toLowerCase().contains("presentation") ||
+              event.description.toLowerCase().contains("meeting")));
+
+        // Set silent mode if any of the indicators suggest it's a meeting or an important event
+        return hasAttendees || hasMeetingLink || isTypicalMeetingDuration || isImportantEvent;
     }
 
     private void checkBackgroundLocationPermission() {
@@ -130,7 +322,13 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d(TAG, "onRequestPermissionsResult: Handling permission result for request code: " + requestCode);
 
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+        if (requestCode == CALENDAR_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCalendarUpdates();
+            } else {
+                showPermissionDeniedDialog("Calendar access is required to manage device modes based on events.");
+            }
+        } else if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 checkBackgroundLocationPermission();
             } else {

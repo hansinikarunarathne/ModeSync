@@ -9,14 +9,21 @@ public class SensorManagerHelper {
     private SensorManager sensorManager;
     private Sensor accelerometer, gyroscope, light, proximity;
     private SensorEventListenerImpl listener;
+    private Context context;
 
     private boolean isAccelerometerAvailable, isGyroscopeAvailable, isLightAvailable, isProximityAvailable;
     private TextView textView;
 
     public SensorManagerHelper(Context context, SensorEventListenerImpl listener, TextView textView) {
+        this.context = context;
         this.listener = listener;
         this.textView = textView;
+        initializeSensors();
+    }
+
+    private void initializeSensors() {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        textView.setText(""); // Clear previous status
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -55,6 +62,17 @@ public class SensorManagerHelper {
         }
     }
 
+    public void refreshSensors() {
+        // Unregister current listeners
+        unregisterSensors();
+        
+        // Reinitialize sensors
+        initializeSensors();
+        
+        // Register listeners again
+        registerSensors();
+    }
+
     public void registerSensors() {
         if (isAccelerometerAvailable)
             sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -67,6 +85,6 @@ public class SensorManagerHelper {
     }
 
     public void unregisterSensors() {
-            sensorManager.unregisterListener(listener);
-        }
+        sensorManager.unregisterListener(listener);
     }
+}
