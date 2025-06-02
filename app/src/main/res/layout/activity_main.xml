@@ -108,13 +108,11 @@
                 app:icon="@android:drawable/ic_menu_edit"
                 style="@style/Widget.MaterialComponents.Button"/>
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/manageProfilesButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manage Profiles"
-                app:icon="@android:drawable/ic_menu_manage"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                android:text="Manage Profiles" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

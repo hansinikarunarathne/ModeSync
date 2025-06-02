@@ -15,7 +15,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    manifestPlaceholders = [ googleMapsKey: project.property("MAPS_API_KEY") ]
     buildTypes {
         release {
             minifyEnabled false

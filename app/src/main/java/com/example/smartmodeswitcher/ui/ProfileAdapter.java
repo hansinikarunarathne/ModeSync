@@ -32,6 +32,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         this.listener = listener;
     }
 
+    public void updateProfiles(List<Profile> newProfiles) {
+        this.profiles = newProfiles;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,11 +71,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         }
         holder.location.setVisibility(View.VISIBLE);
 
-        holder.editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ProfileEditorActivity.class);
-            intent.putExtra("editIndex", position);
-            context.startActivity(intent);
-        });
+        holder.editButton.setOnClickListener(v -> listener.onEdit(profile, position));
         holder.deleteButton.setOnClickListener(v -> listener.onDelete(profile, position));
     }
 

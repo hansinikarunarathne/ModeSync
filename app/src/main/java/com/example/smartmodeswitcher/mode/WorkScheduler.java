@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-
 import java.util.concurrent.TimeUnit;
 
 public class WorkScheduler {
@@ -14,7 +13,7 @@ public class WorkScheduler {
 
     public static void scheduleProfileEvaluation(Context context) {
         PeriodicWorkRequest workRequest =
-                new PeriodicWorkRequest.Builder(ProfileEvaluationWorker.class, 15, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ProfileEvaluationWorker.class, 2, TimeUnit.MINUTES)
                         .build();
 
         WorkManager.getInstance(context)

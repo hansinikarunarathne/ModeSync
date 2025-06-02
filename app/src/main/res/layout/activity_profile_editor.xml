@@ -77,8 +77,11 @@
                         android:id="@+id/startTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="time"
-                        android:drawableEnd="@android:drawable/ic_menu_recent_history"/>
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:drawableEnd="@android:drawable/ic_menu_recent_history"
+                        android:background="?attr/selectableItemBackground"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -92,8 +95,11 @@
                         android:id="@+id/endTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="time"
-                        android:drawableEnd="@android:drawable/ic_menu_recent_history"/>
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:drawableEnd="@android:drawable/ic_menu_recent_history"
+                        android:background="?attr/selectableItemBackground"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
