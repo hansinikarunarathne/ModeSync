@@ -22,7 +22,13 @@ public class ModeSwitcher {
 
     private static int lastMode = -1;  // -1 means unknown
 
+    private static long lastSwitchTime = 0;
+    private static final long COOLDOWN_MS = 10000; // 10 seconds
+
     public static void switchMode(Context context, String detectedContext) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastSwitchTime < COOLDOWN_MS) return;
+
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         if (audioManager == null) return;
 
@@ -69,8 +75,8 @@ public class ModeSwitcher {
                 msg = "Switched to Normal mode (On Desk)";
                 break;
             case "In Hand":
-                desiredMode = AudioManager.RINGER_MODE_SILENT;
-                msg = "Switched to Silent mode (In Hand)";
+                desiredMode = AudioManager.RINGER_MODE_NORMAL;
+                msg = "Switched to Silent mode";
                 break;
             default:
                 return;
@@ -98,6 +104,10 @@ public class ModeSwitcher {
                 return AudioManager.RINGER_MODE_NORMAL;
             default:
                 return AudioManager.RINGER_MODE_NORMAL;
+            audioManager.setRingerMode(desiredMode);
+            lastMode = desiredMode;
+            lastSwitchTime = currentTime; // update cooldown timestamp
+            sendNotification(context, msg);
         }
     }
 

@@ -18,6 +18,7 @@ public class SensorEventListenerImpl implements SensorEventListener {
     private float lightValue = -1;
     private float proximityValue = -1;
 
+
     public SensorEventListenerImpl(Context context, TextView tvContext, TextView tvValues) {
         this.context = context;
         this.tvContext = tvContext;
