@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.widget.TextView;
 
+import com.example.smartmodeswitcher.models.ContextResult;
 import com.example.smartmodeswitcher.modeswitcher.ModeSwitcher;
 
 public class SensorEventListenerImpl implements SensorEventListener {
@@ -58,9 +59,10 @@ public class SensorEventListenerImpl implements SensorEventListener {
 
     @SuppressLint("SetTextI18n")
     private void detectContext() {
-        String contextResult = ContextDetector.detect(accelValues, lightValue, proximityValue);
-        tvContext.setText("Detected Context: " + contextResult);
-        ModeSwitcher.switchMode(context, contextResult);
+        ContextResult contextResult = ContextDetector.detect(accelValues, lightValue, proximityValue, gyroValues);
+        tvContext.setText("Detected Context: \n" + String.format("%s\n%s",
+                contextResult.getStableContext(), contextResult.getMotionContext()));
+        ModeSwitcher.switchMode(context, contextResult.getStableContext());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.smartmodeswitcher.sensors;
 
+import com.example.smartmodeswitcher.models.ContextResult;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -7,21 +9,17 @@ public class ContextDetector {
 
 
     private static final int WINDOW_SIZE = 40; // 5 seconds at 200ms/sample
-    private static final float VEHICLE_MIN = 10.5f;
-    private static final float VEHICLE_MAX = 13.0f;
-    private static final float WALK_MIN = 10.5f;
-    private static final float WALK_MAX = 17.0f;
-    private static final float RUN_MIN = 17.0f;
-    private static String lastContext = "Unknown";
-    private static int stableCount = 0;
-    private static final int STABLE_THRESHOLD = 5; // Require 5 consecutive detections
 
-    private static final float SAMPLE_INTERVAL_MS = 200f;
+    private static final float STATIONARY_THRESHOLD = 0.01f;
+    public static final float ACCELEROMETER_THRESHOLD = 9.7f;
+    public static final float PROXIMITY_THRESHOLD = 0.5f;
+    public static final float LIGHT_SENSOR_THRESHOLD = 5f;
+    private static String lastContext = "Unknown";
 
     private static final Queue<Float> magnitudeWindow = new LinkedList<>();
 
 
-    public static String detect(float[] accelValues, float lightValue, float proximityValue) {
+    public static ContextResult detect(float[] accelValues, float lightValue, float proximityValue, float[] gyroValues) {
         float ax = accelValues[0];
         float ay = accelValues[1];
         float az = accelValues[2];
@@ -33,49 +31,59 @@ public class ContextDetector {
         }
         magnitudeWindow.offer(magnitude);
 
-        // Count how many values are in vehicle range
-        int inVehicleCount = 0, walkingCount = 0, runningCount = 0;
-        for (float m : magnitudeWindow) {
-            if (m > VEHICLE_MIN && m < VEHICLE_MAX) inVehicleCount++;
-            if (m > WALK_MIN && m < WALK_MAX) walkingCount++;
-            if (m > RUN_MIN) runningCount++;
+        if (magnitudeWindow.size() < WINDOW_SIZE) {
+            return new ContextResult(lastContext, lastContext); // Not enough data yet
         }
 
-        boolean isRunning = magnitudeWindow.size() == WINDOW_SIZE && runningCount > WINDOW_SIZE * 0.6;
-        boolean isWalking = magnitudeWindow.size() == WINDOW_SIZE && walkingCount > WINDOW_SIZE * 0.6;
-        boolean isInVehicle = magnitudeWindow.size() == WINDOW_SIZE && inVehicleCount > WINDOW_SIZE * 0.6;
-        boolean isInPocket = proximityValue == 0 && lightValue < 20;
-        boolean isOnDesk = (Math.abs(ax) < 1 && Math.abs(ay) < 1 && Math.abs(az - 9.8f) < 1);
-        boolean isInHand = !isInPocket && lightValue > 20;
+        float mean = mean(magnitudeWindow);
+        float var = variance(magnitudeWindow, mean);
 
-        String currentContext;
-        if (isRunning) {
-            currentContext = "Running";
+        boolean isStationary = var < STATIONARY_THRESHOLD;
+        boolean isWalking = var >= STATIONARY_THRESHOLD;
+
+        // Desk detection: flat orientation (face-up or face-down)
+        boolean isDesk = Math.abs(az) > ACCELEROMETER_THRESHOLD && isStationary;
+
+        // Pocket detection: proximity near and light very low
+        boolean isPocket = lightValue < LIGHT_SENSOR_THRESHOLD || proximityValue == 0;
+
+        // Hand detection: not flat, proximity not near (e.g., holding in hand)
+        boolean isHand = Math.abs(az) < ACCELEROMETER_THRESHOLD && proximityValue > PROXIMITY_THRESHOLD;
+
+        // Determine posture context
+        String stableContext = lastContext;
+        if (isPocket) {
+            stableContext = "In Pocket";
+        } else if (isDesk) {
+            stableContext = "On Desk";
+        } else if (isHand) {
+            stableContext = "In Hand";
+        } else {
+            stableContext = "Unknown";
+        }
+
+        String motionContext = lastContext;
+        if (isStationary) {
+            motionContext = "Stationary";
         } else if (isWalking) {
-            currentContext = "Walking";
-        } else if (isInVehicle) {
-            currentContext = "In Vehicle";
-        } else if (isInPocket) {
-            currentContext = "In Pocket";
-        } else if (isOnDesk) {
-            currentContext = "On Desk";
-        } else if (isInHand) {
-            currentContext = "In Hand";
-        } else {
-            currentContext = "Unknown";
+            motionContext = "Moving";
         }
 
-        if (currentContext.equals(lastContext)) {
-            stableCount++;
-        } else {
-            stableCount = 1;
-            lastContext = currentContext;
-        }
+        return new ContextResult(stableContext, motionContext);
+    }
 
-        if (stableCount >= STABLE_THRESHOLD) {
-            return currentContext;
-        } else {
-            return lastContext;
+    private static float mean(Queue<Float> values) {
+        float sum = 0f;
+        for (float v : values) sum += v;
+        return sum / values.size();
+    }
+
+    private static float variance(Queue<Float> values, float mean) {
+        float sumSq = 0f;
+        for (float v : values) {
+            float diff = v - mean;
+            sumSq += diff * diff;
         }
+        return sumSq / values.size();
     }
 }

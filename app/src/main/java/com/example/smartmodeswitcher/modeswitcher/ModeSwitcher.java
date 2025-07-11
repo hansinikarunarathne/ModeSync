@@ -104,10 +104,6 @@ public class ModeSwitcher {
                 return AudioManager.RINGER_MODE_NORMAL;
             default:
                 return AudioManager.RINGER_MODE_NORMAL;
-            audioManager.setRingerMode(desiredMode);
-            lastMode = desiredMode;
-            lastSwitchTime = currentTime; // update cooldown timestamp
-            sendNotification(context, msg);
         }
     }
 
