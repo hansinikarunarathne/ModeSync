@@ -59,7 +59,7 @@ public class SensorEventListenerImpl implements SensorEventListener {
 
     @SuppressLint("SetTextI18n")
     private void detectContext() {
-        ContextResult contextResult = ContextDetector.detect(accelValues, lightValue, proximityValue, gyroValues);
+        ContextResult contextResult = ContextDetector.detect(accelValues, lightValue, proximityValue);
         tvContext.setText("Detected Context: \n" + String.format("%s\n%s",
                 contextResult.getStableContext(), contextResult.getMotionContext()));
         ModeSwitcher.switchMode(context, contextResult.getStableContext());

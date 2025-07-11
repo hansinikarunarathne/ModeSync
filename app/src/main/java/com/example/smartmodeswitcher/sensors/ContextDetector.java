@@ -19,7 +19,7 @@ public class ContextDetector {
     private static final Queue<Float> magnitudeWindow = new LinkedList<>();
 
 
-    public static ContextResult detect(float[] accelValues, float lightValue, float proximityValue, float[] gyroValues) {
+    public static ContextResult detect(float[] accelValues, float lightValue, float proximityValue) {
         float ax = accelValues[0];
         float ay = accelValues[1];
         float az = accelValues[2];

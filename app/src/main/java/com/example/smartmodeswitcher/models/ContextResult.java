@@ -5,7 +5,7 @@ public class ContextResult {
     private final String motionContext;
     private final String stableContext;
 
-    public ContextResult(String motionContext, String stableContext) {
+    public ContextResult(String stableContext,String motionContext ) {
         this.motionContext = motionContext;
         this.stableContext = stableContext;
     }
