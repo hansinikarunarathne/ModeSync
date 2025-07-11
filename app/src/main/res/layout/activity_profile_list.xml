@@ -13,7 +13,7 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary"
+            android:background="?attr/colorPrimary"
             app:title="Profiles"
             app:titleTextColor="@color/surface"
             app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"/>
@@ -64,13 +64,14 @@
         android:textColor="@color/secondary_text"
         android:visibility="gone"/>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:text="Add Profile"
-        app:icon="@android:drawable/ic_input_add"/>
+        android:contentDescription="Add Profile"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="?attr/colorPrimary"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
