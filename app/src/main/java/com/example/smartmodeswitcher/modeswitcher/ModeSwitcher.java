@@ -75,7 +75,7 @@ public class ModeSwitcher {
                 msg = "Switched to Normal mode (On Desk)";
                 break;
             case "In Hand":
-                desiredMode = AudioManager.RINGER_MODE_NORMAL;
+                desiredMode = AudioManager.RINGER_MODE_SILENT;
                 msg = "Switched to Silent mode";
                 break;
             default:

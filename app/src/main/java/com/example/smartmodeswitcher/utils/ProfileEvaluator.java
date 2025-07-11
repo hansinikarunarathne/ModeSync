@@ -2,11 +2,14 @@ package com.example.smartmodeswitcher.utils;
 
 import android.content.Context;
 import android.location.Location;
-import android.text.TextUtils;
+import android.os.Build;
+
 import com.example.smartmodeswitcher.data.Profile;
 import com.example.smartmodeswitcher.location.LocationManagerHelper;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -42,13 +45,19 @@ public class ProfileEvaluator {
 
     private static boolean isTimeInRange(String currentTime, String startTime, String endTime) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            Date current = sdf.parse(currentTime);
-            Date start = sdf.parse(startTime);
-            Date end = sdf.parse(endTime);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime current = LocalTime.parse(currentTime, formatter);
+                LocalTime start = LocalTime.parse(startTime, formatter);
+                LocalTime end = LocalTime.parse(endTime, formatter);
 
-            return current != null && start != null && end != null &&
-                    current.after(start) && current.before(end);
+                if (start.isBefore(end)) {
+                    return (!current.isBefore(start)) && (!current.isAfter(end));
+                } else {
+                    return current.isBefore(start) || current.isAfter(end);
+                }
+            }
+            return false;
         } catch (Exception e) {
             return false;
         }
