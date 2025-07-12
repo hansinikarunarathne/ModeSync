@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private SensorManagerHelper sensorManagerHelper;
     private SensorEventListenerImpl sensorEventListener;
     private TextView tvContext, tvValues, tvSensorStatus, tvCalendarEvent;
+    private TextView tvValueAccelometer, tvValueGyroscope, tvValueLightSensor, tvValueProximity;
     private Button btnEditProfiles;
     private SwipeRefreshLayout swipeRefreshLayout;
     private CardView contextCard, sensorCard, calendarCard;
@@ -68,20 +69,20 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         Log.d(TAG, "initializeViews: Setting up views");
         tvContext = findViewById(R.id.tvContext);
-        tvValues = findViewById(R.id.tvValues);
-        tvSensorStatus = findViewById(R.id.tvSensorStatus);
+        tvValueAccelometer = findViewById(R.id.accelerometerValues);
+        tvValueGyroscope = findViewById(R.id.gyroscopeValue);
+        tvValueLightSensor = findViewById(R.id.LightSnsorValues);
+        tvValueProximity = findViewById(R.id.proximityValues);
         tvCalendarEvent = findViewById(R.id.tvCalendarEvent);
         btnEditProfiles = findViewById(R.id.btnEditProfiles);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         
         // Initialize cards
         contextCard = findViewById(R.id.contextCard);
-        sensorCard = findViewById(R.id.sensorCard);
         calendarCard = findViewById(R.id.calendarCard);
 
-        tvSensorStatus.setText("");
-        sensorEventListener = new SensorEventListenerImpl(this, tvContext, tvValues);
-        sensorManagerHelper = new SensorManagerHelper(this, sensorEventListener, tvSensorStatus);
+        sensorEventListener = new SensorEventListenerImpl(this, tvContext, tvValueAccelometer, tvValueGyroscope, tvValueLightSensor, tvValueProximity);
+        sensorManagerHelper = new SensorManagerHelper(this, sensorEventListener);
     }
 
     private void setupSwipeRefresh() {
@@ -130,11 +131,6 @@ public class MainActivity extends AppCompatActivity {
         contextCard.setOnClickListener(v -> {
             // Show detailed context information
             showContextDetails();
-        });
-
-        sensorCard.setOnClickListener(v -> {
-            // Show detailed sensor information
-            showSensorDetails();
         });
 
         calendarCard.setOnClickListener(v -> {
@@ -219,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateCalendarEvent() {
         CalendarHelper.CalendarEvent currentEvent = calendarHelper.getCurrentEvent();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        
+        String eventText = "No events scheduled for today";
         if (currentEvent != null) {
             // Only handle events that are currently active
             long currentTime = System.currentTimeMillis();
@@ -228,15 +224,15 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 String startTime = timeFormat.format(new Date(currentEvent.startTime));
                 String endTime = timeFormat.format(new Date(currentEvent.endTime));
-                
-                String eventText = String.format("Current Event: %s\nTime: %s - %s\nCalendar: %s",
+
+                eventText = String.format("Current Event: %s\nTime: %s - %s\nCalendar: %s",
                         currentEvent.title, startTime, endTime, currentEvent.calendarName);
-                
+
                 tvCalendarEvent.setText(eventText);
-                
+
                 // Determine if we should set silent mode based on event properties
                 boolean shouldSetSilent = shouldSetSilentMode(currentEvent);
-                
+
                 // Set device mode based on event type
                 if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
                     if (shouldSetSilent) {
@@ -248,13 +244,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                tvCalendarEvent.setText("");
+                // Not currently in an event, show no events message
+                tvCalendarEvent.setText("No events scheduled for today");
                 if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
                     WorkScheduler.scheduleProfileEvaluation(this);
                 }
             }
         } else {
-            tvCalendarEvent.setText("");
+            // No event at all, show no events message
+            tvCalendarEvent.setText("No events scheduled for today");
             if (notificationManager != null && notificationManager.isNotificationPolicyAccessGranted()) {
                 WorkScheduler.scheduleProfileEvaluation(this);
             }
@@ -389,3 +387,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 }
+

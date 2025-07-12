@@ -3,7 +3,6 @@ package com.example.smartmodeswitcher.sensors;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.widget.TextView;
 
 public class SensorManagerHelper {
     private SensorManager sensorManager;
@@ -12,52 +11,41 @@ public class SensorManagerHelper {
     private Context context;
 
     private boolean isAccelerometerAvailable, isGyroscopeAvailable, isLightAvailable, isProximityAvailable;
-    private TextView textView;
 
-    public SensorManagerHelper(Context context, SensorEventListenerImpl listener, TextView textView) {
+    public SensorManagerHelper(Context context, SensorEventListenerImpl listener) {
         this.context = context;
         this.listener = listener;
-        this.textView = textView;
         initializeSensors();
     }
 
     private void initializeSensors() {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        textView.setText(""); // Clear previous status
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             isAccelerometerAvailable = true;
-            textView.append("Accelerometer Sensor is available\n");
         } else {
-            textView.append("Accelerometer Sensor is not available\n");
             isAccelerometerAvailable = false;
         }
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
             gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
             isGyroscopeAvailable = true;
-            textView.append("Gyroscope Sensor is available\n");
         } else {
-            textView.append("Gyroscope Sensor is not available\n");
             isGyroscopeAvailable = false;
         }
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) != null) {
             light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
             isLightAvailable = true;
-            textView.append("Light Sensor is available\n");
         } else {
-            textView.append("Light Sensor is not available\n");
             isLightAvailable = false;
         }
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
             proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
             isProximityAvailable = true;
-            textView.append("Proximity Sensor is available\n");
         } else {
-            textView.append("Proximity Sensor is not available\n");
             isProximityAvailable = false;
         }
     }

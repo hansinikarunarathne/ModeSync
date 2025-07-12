@@ -11,4 +11,12 @@
     <color name="error">#B00020</color>
     <color name="success">#4CAF50</color>
     <color name="divider">#BDBDBD</color>
+    <color name="gradient_end">#764ba2</color>
+    <color name="gradient_start">#667eea</color>
+    <color name="accent_red">#FF6B6B</color>
+    <color name="accent_red_end">#FF8E8E</color>
+    <color name="text_secondary">#666666</color>
+    <color name="light_purple">#F3F4FF</color>
+
+
 </resources>

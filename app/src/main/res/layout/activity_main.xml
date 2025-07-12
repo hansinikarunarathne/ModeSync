@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/topAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="Smart Mode Switcher"/>
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/topAppBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="?attr/actionBarSize"-->
+<!--        android:background="?attr/colorPrimary"-->
+<!--        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+<!--        app:title="Smart Mode Switcher"/>-->
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -39,92 +39,307 @@
                     app:cardElevation="2dp">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="395dp"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
+                        android:background="@drawable/status_card_background"
                         android:padding="16dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Current Context"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
+                            android:layout_weight="1"
+                            android:text="🏠 Current Context"
+                            android:textSize="18sp"
+                            android:textColor="@color/surface"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvContext"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Detected Context: Unknown"
-                            android:textSize="18sp"/>
+                            android:background="@drawable/context_badge"
+                            android:text="Unknown"
+                            android:textSize="16sp"
+                            android:textColor="@color/surface"
+                            android:padding="8dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginRight="10dp"
+                            />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/sensorCard"
+                <GridLayout
+                    android:id="@+id/gridLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    android:columnCount="2"
+                    android:rowCount="2"
+                    android:alignmentMode="alignMargins"
+                    android:padding="8dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <!-- Card Example -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        android:layout_margin="8dp"
+                        android:layout_columnWeight="1">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sensor Status"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
-
-                        <TextView
-                            android:id="@+id/tvSensorStatus"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textSize="16sp"/>
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:gravity="center_horizontal">
 
-                        <TextView
-                            android:id="@+id/tvValues"
+                            <TextView
+                                android:id="@+id/tv_sensor_icon"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="📱"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:background="@drawable/sensor_icon_bg"
+                                android:layout_marginBottom="10dp" />
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Accelerometer"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:id="@+id/accelerometerValues"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="[0.81, 0.56, 9.99]"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+
+                            <TextView
+                                android:id="@+id/accelerometerAvailability"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="✓ Available"
+                                android:textColor="@android:color/holo_green_dark"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_columnWeight="1">
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textSize="16sp"/>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:gravity="center_horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_sensor_icon2"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="🔄"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:background="@drawable/sensor_icon_bg"
+                                android:layout_marginBottom="10dp" />
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Gyroscope"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:id="@+id/gyroscopeValue"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="[0.81, 0.56, 9.99]"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+
+                            <TextView
+                                android:id="@+id/GyroscopeAvailability"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="✓ Available"
+                                android:textColor="@android:color/holo_green_dark"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_columnWeight="1">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:gravity="center_horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_sensor_icon3"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="💡"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:background="@drawable/sensor_icon_bg"
+                                android:layout_marginBottom="10dp" />
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Light Sensor"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:id="@+id/LightSnsorValues"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="[0.81, 0.56, 9.99]"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+
+                            <TextView
+                                android:id="@+id/LightSensorAvailability"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="✓ Available"
+                                android:textColor="@android:color/holo_green_dark"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_columnWeight="1">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:gravity="center_horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_sensor_icon4"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="📏"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:background="@drawable/sensor_icon_bg"
+                                android:layout_marginBottom="10dp" />
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Proximity"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:id="@+id/proximityValues"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="[0.81, 0.56, 9.99]"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+
+                            <TextView
+                                android:id="@+id/proximityAvailability"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="✓ Available"
+                                android:textColor="@android:color/holo_green_dark"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <!-- Repeat this CardView for Gyroscope, Light Sensor, Proximity -->
+
+                </GridLayout>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/calendarCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    android:layout_marginBottom="20dp"
+                    app:cardBackgroundColor="@color/surface"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="15dp">
+
+
+                        <TextView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:text="📅"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:background="@drawable/calender_icon_bg"
+                            android:layout_marginEnd="12dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Calendar Events"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
+                            android:textSize="18sp"
+                            android:textColor="@color/primary_text"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
 
                         <TextView
                             android:id="@+id/tvCalendarEvent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textSize="16sp"/>
+                            android:text="No events scheduled for today"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary"
+                            android:textStyle="italic"
+                            android:gravity="center"
+                            android:padding="20dp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -132,25 +347,45 @@
                     android:id="@+id/btnViewTodayEvents"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:text="View Today's Events"
-                    android:drawableStart="@android:drawable/ic_menu_my_calendar"
-                    android:drawablePadding="8dp"/>
+                    android:textSize="16sp"
+                    android:textColor="@color/surface"
+                    android:textStyle="bold"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/button_primary"
+                    android:padding="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:elevation="4dp"/>
 
                 <Button
                     android:id="@+id/btnEditProfiles"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:text="Edit Profiles"
-                    android:drawableStart="@android:drawable/ic_menu_edit"
-                    android:drawablePadding="8dp"/>
+                    app:backgroundTint="@null"
+                    android:textSize="16sp"
+                    android:textColor="@color/gradient_start"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_secondary"
+                    android:backgroundTint="@null"
+                    android:padding="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:elevation="4dp"/>
 
                 <Button
                     android:id="@+id/manageProfilesButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Manage Profiles"/>
+                    android:text="Manage Profiles"
+                    app:backgroundTint="@null"
+                    android:textSize="16sp"
+                    android:textColor="@color/gradient_start"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_secondary"
+                    android:backgroundTint="@null"
+                    android:padding="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:elevation="4dp"/>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
